@@ -1,0 +1,262 @@
+<!doctype html>
+<html lang="fr">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Duty de HT-1 : chaîne de production de GPL</title>
+  <meta name="prefill-key" content="{{ api_key }}">
+  <link rel="stylesheet" href="/static/css/style.css">
+</head>
+
+<body>
+
+  <header class="top">
+    <div>
+      <h1>Duty de l’échangeur HT-1</h1>
+      <p class="top__sub">Chaîne de production de GPL. Le modèle estime le duty à partir des mesures de la colonne T101.
+      </p>
+    </div>
+    <div class="key">
+      <label for="api-key">Clé API</label>
+      <div class="key__field">
+        <input id="api-key" type="password" autocomplete="off" spellcheck="false" placeholder="X-API-Key">
+        <button type="button" class="btn btn--ghost" id="btn-key-toggle" aria-pressed="false">Afficher</button>
+      </div>
+      <span id="status" class="status" role="status" data-state="loading">Connexion au serveur</span>
+    </div>
+  </header>
+
+  <div class="toolbar">
+    <div class="toolbar__inner">
+      <fieldset class="seg" id="model-switch">
+        <legend class="sr">Modèle utilisé</legend>
+        <label class="seg__opt"><input type="radio" name="model" value="ridge" checked><span
+            id="ridge-label">Ridge</span></label>
+
+      </fieldset>
+      <button type="button" class="btn" id="btn-example" disabled>Valeurs d’exemple</button>
+      <button type="button" class="btn" id="btn-flow" aria-pressed="true">Arrêter l’animation</button>
+      <span class="toolbar__spacer"></span>
+      <output id="toolbar-result" class="toolbar__result" aria-live="polite"></output>
+      <button type="button" class="btn btn--primary" id="btn-estimate" disabled>Estimer le duty</button>
+    </div>
+  </div>
+
+  <main>
+    <section class="sheet" aria-label="Schéma de la chaîne de production">
+      <div class="sheet__frame">
+        <svg id="pfd" viewBox="0 0 1024 380" role="group" aria-labelledby="pfd-title pfd-desc"
+          xmlns="http://www.w3.org/2000/svg">
+          <title id="pfd-title">Schéma de la chaîne de production de GPL</title>
+          <desc id="pfd-desc">Deux alimentations sont mélangées puis séparées dans le ballon V101. Le liquide est pompé,
+            détendu, réchauffé dans HX-1 puis dans HT-1 avant d’entrer dans la colonne T101. Les bulles de mesure sont
+            cliquables et mènent au champ correspondant.</desc>
+
+          <defs>
+            <filter id="soft" x="-80%" y="-80%" width="260%" height="260%">
+              <feGaussianBlur stdDeviation="6" />
+            </filter>
+            <clipPath id="clip-v101">
+              <rect x="213" y="88" width="28" height="48" rx="12" />
+            </clipPath>
+            <clipPath id="clip-t101">
+              <rect x="814" y="156" width="22" height="98" rx="10" />
+            </clipPath>
+          </defs>
+
+          <rect class="frame" x="4" y="4" width="1016" height="372" rx="4" />
+
+          <!-- Tuyauterie et animations de flux -->
+          <g id="layer-pipes"></g>
+
+          <!-- Équipements du procédé -->
+          <g id="equipment">
+            <g id="eq-mix">
+              <title>MIX-1 : mélangeur des deux alimentations</title>
+              <polygon class="eq" points="98,86 98,106 118,96" />
+            </g>
+
+            <g id="eq-v101">
+              <title>V101 : ballon de séparation</title>
+              <rect class="eq" x="213" y="88" width="28" height="48" rx="12" />
+              <g clip-path="url(#clip-v101)">
+                <rect class="liquid" x="213" y="114" width="28" height="22" />
+              </g>
+              <line class="eq-thin" x1="213" y1="114" x2="241" y2="114" />
+            </g>
+
+            <g id="eq-k101">
+              <title>k101 : compresseur</title>
+              <polygon class="eq" points="328,134 348,126 348,158 328,150" />
+            </g>
+
+            <g id="eq-p101">
+              <title>P101 : pompe</title>
+              <circle class="eq" cx="198" cy="242" r="10" />
+              <g transform="translate(198 242)">
+                <g class="rotor">
+                  <polygon class="rotor-shape" points="0,-5 4,4 -4,4" />
+                </g>
+              </g>
+            </g>
+
+            <g id="eq-pipe1">
+              <title>PIPE-1 : tronçon de tuyauterie</title>
+              <rect class="eq" x="286" y="238" width="28" height="8" rx="3" />
+              <line class="eq-thin" x1="289" y1="238" x2="289" y2="246" />
+              <line class="eq-thin" x1="311" y1="238" x2="311" y2="246" />
+            </g>
+
+            <g id="eq-valve">
+              <title>VALVE-1 : vanne de détente</title>
+              <polygon class="eq" points="414,203 421,208 414,213" />
+              <polygon class="eq" points="428,203 421,208 428,213" />
+            </g>
+
+            <g id="eq-hx1">
+              <title>HX-1 : échangeur chauffé à la vapeur</title>
+              <circle class="eq" cx="552" cy="236" r="14" />
+              <path class="eq-thin" d="M 542 240 L 546 232 L 550 240 L 554 232 L 558 240 L 562 235" />
+            </g>
+
+            <g id="eq-ht1">
+              <title>HT-1 : réchauffeur avant colonne T101</title>
+              <polygon id="ht1-glow" class="glow" points="692,222 710,240 692,258 674,240" filter="url(#soft)" />
+              <polygon id="ht1-body" class="eq" points="692,228 704,240 692,252 680,240" />
+              <text class="eq-letter" x="692" y="244" text-anchor="middle">H</text>
+            </g>
+
+            <g id="eq-t101">
+              <title>T101 : colonne de distillation</title>
+              <rect class="eq" x="814" y="156" width="22" height="98" rx="10" />
+              <g clip-path="url(#clip-t101)">
+                <rect class="liquid" x="814" y="244" width="22" height="10" />
+                <line class="tray" x1="814" y1="168" x2="836" y2="168" />
+                <line class="tray" x1="814" y1="178" x2="836" y2="178" />
+                <line class="tray" x1="814" y1="188" x2="836" y2="188" />
+                <line class="tray" x1="814" y1="198" x2="836" y2="198" />
+                <line class="tray" x1="814" y1="208" x2="836" y2="208" />
+                <line class="tray" x1="814" y1="218" x2="836" y2="218" />
+                <line class="tray" x1="814" y1="228" x2="836" y2="228" />
+                <line class="tray" x1="814" y1="238" x2="836" y2="238" />
+              </g>
+            </g>
+
+            <g id="eq-cond">
+              <title>E5 : condenseur de tête</title>
+              <circle id="cond-body" class="eq" cx="869" cy="170" r="11" />
+              <path class="eq-thin" d="M 861 173 L 865 166 L 869 174 L 873 166 L 877 171" />
+            </g>
+
+            <g id="eq-reb">
+              <title>E6 : rebouilleur de fond</title>
+              <circle id="reb-body" class="eq" cx="869" cy="238" r="11" />
+              <path class="eq-thin" d="M 861 241 L 865 234 L 869 242 L 873 234 L 877 239" />
+            </g>
+          </g>
+
+          <!-- Noms des équipements, flux et énergies -->
+          <g id="names">
+            <text class="name name--eq" x="108" y="118" text-anchor="middle">MIX-1</text>
+            <text class="name name--eq" x="227" y="148" text-anchor="middle">V101</text>
+            <text class="name name--eq" x="356" y="170">k101</text>
+            <text class="name name--eq" x="216" y="262">P101</text>
+            <text class="name name--eq" x="300" y="230" text-anchor="middle">PIPE-1</text>
+            <text class="name name--eq" x="421" y="224" text-anchor="middle">VALVE-1</text>
+            <text class="name name--eq" x="552" y="260" text-anchor="middle">HX-1</text>
+            <text class="name name--eq" x="684" y="270" text-anchor="end">HT-1</text>
+            <text class="name name--eq" x="825" y="278" text-anchor="middle">T101</text>
+
+            <text class="name name--stream" x="42" y="48">feed1</text>
+            <text class="name name--stream" x="42" y="125">feed2</text>
+            <text class="name name--stream" x="156" y="128" text-anchor="middle">5</text>
+            <text class="name name--stream" x="270" y="72" text-anchor="middle">6</text>
+            <text class="name name--stream" x="372" y="138" text-anchor="middle">9</text>
+            <text class="name name--stream" x="290" y="136" text-anchor="middle">7</text>
+            <text class="name name--stream" x="246" y="238" text-anchor="middle">10</text>
+            <text class="name name--stream" x="365" y="238" text-anchor="middle">11</text>
+            <text class="name name--stream" x="488" y="232" text-anchor="middle">13</text>
+            <text class="name name--stream" x="510" y="272" text-anchor="middle">LP stream</text>
+            <text class="name name--stream" x="575" y="290" text-anchor="middle">LP condensante</text>
+            <text class="name name--stream" x="596" y="232" text-anchor="middle">15a</text>
+            <text class="name name--stream" x="738" y="234" text-anchor="middle">16</text>
+            <text class="name name--stream" x="945" y="164" text-anchor="middle">17</text>
+            <text class="name name--stream" x="876" y="318" text-anchor="middle">18</text>
+
+            <!-- Énergies : E1 à E3 viennent de la simulation DWSIM, E4 à E6 suivent les mesures et l'estimation -->
+            <g id="layer-energy">
+              <text class="name name--energy" x="328" y="204" text-anchor="end">⚡ E1</text>
+              <text class="name name--energy-val" x="328" y="216" text-anchor="end">96,49 kW</text>
+
+              <text class="name name--energy" x="168" y="284" text-anchor="middle">⚡ E2</text>
+              <text class="name name--energy-val" x="168" y="296" text-anchor="middle">226,61 kW</text>
+
+              <text class="name name--energy" x="300" y="308" text-anchor="middle">⚡ E3</text>
+              <text class="name name--energy-val" x="300" y="320" text-anchor="middle">0,00 kW</text>
+
+              <text class="name name--energy" x="692" y="328" text-anchor="middle">⚡ E4</text>
+              <text id="e4-energy-val" class="name name--energy-val" x="692" y="340" text-anchor="middle">—</text>
+
+              <text class="name name--energy" x="924" y="132" text-anchor="start">⚡ E5</text>
+              <text id="e5-energy-val" class="name name--energy-val" x="924" y="144" text-anchor="start">—</text>
+
+              <text class="name name--energy" x="906" y="272" text-anchor="start">⚡ E6</text>
+              <text id="e6-energy-val" class="name name--energy-val" x="906" y="284" text-anchor="start">—</text>
+            </g>
+          </g>
+
+          <!-- Bulles de mesure interactives -->
+          <g id="layer-readouts"></g>
+
+          <!-- Encadré Duty HT-1 -->
+          <g id="callout">
+            <line class="leader" x1="692" y1="190" x2="692" y2="224" />
+            <circle class="leader-dot" cx="692" cy="224" r="2.5" />
+            <rect class="callout-box" x="590" y="136" width="140" height="54" rx="3" />
+            <text class="callout-label" x="600" y="152">Duty estimé de HT-1</text>
+            <text class="callout-value" x="600" y="178">
+              <tspan id="duty-big">—</tspan>
+              <tspan class="callout-unit" dx="4">kW</tspan>
+            </text>
+          </g>
+
+          <!-- Cartouche -->
+          <g id="titleblock">
+            <rect class="tb" x="14" y="314" width="260" height="52" rx="2" />
+            <line class="tb-line" x1="14" y1="334" x2="274" y2="334" />
+            <text class="tb-title" x="22" y="328">Chaîne de production de GPL</text>
+            <text class="tb-text" x="22" y="347">Modèle actif : <tspan id="tb-model" class="tb-strong">Ridge</tspan>
+              </text>
+            <text class="tb-note" x="22" y="359">Simulation DWSIM &amp; Machine Learning</text>
+          </g>
+        </svg>
+      </div>
+    </section>
+
+    <div class="lower">
+      <section class="params" aria-labelledby="params-title">
+        <div class="params__head">
+          <h2 id="params-title">Mesures du procédé</h2>
+          <p id="params-count" class="muted"></p>
+        </div>
+        <div id="params-body">
+          <p class="muted">Chargement des mesures attendues par le modèle…</p>
+        </div>
+      </section>
+
+      <aside class="result" aria-labelledby="result-title">
+        <h2 id="result-title">Résultat</h2>
+        <div id="result-body" aria-live="polite">
+          <p class="muted">Aucune estimation pour l’instant. Ajustez les mesures, puis cliquez sur « Estimer le duty ».
+          </p>
+        </div>
+      </aside>
+    </div>
+  </main>
+
+  <script src="/static/js/process.js"></script>
+  <script src="/static/js/app.js"></script>
+</body>
+
+</html>
