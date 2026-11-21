@@ -18,7 +18,7 @@ logging.basicConfig(level=logging.INFO)
 
 BASE_DIR = Path(__file__).resolve().parent
 DEFAULT_TARGET_RANGE = [7000.0, 8000.0]
-GNN_NOTE = "Le modèle GNN n'est pas déployé dans cette API."
+GNN_NOTE = "Le modèle GNN je ne l'ai déployé pas car il a une grand error par rapport ridge poly2"
 
 state = {}
 
@@ -29,14 +29,14 @@ def env_bool(name, default):
 
 @asynccontextmanager
 async def lifespan(app):
-    path = os.getenv("MODEL_PATH", "models/duty_model.joblib")
+    path = os.getenv("MODEL_PATH", str(BASE_DIR.parent / "models" / "duty_model.joblib"))
     if not os.path.exists(path):
         raise RuntimeError(f"Modele introuvable: {path}")
     state["artifact"] = joblib.load(path)
     art = state["artifact"]
     logger.info("Modele charge: %s (%s) | %d features", art["model_name"], art["version"], len(art["features"]))
     if not os.getenv("API_KEY"):
-        logger.warning("API_KEY non definie : /api/predict est ouvert a tous (mode developpement).")
+        logger.warning("API_KEY non definie ")
     yield
     state.clear()
 
@@ -175,4 +175,8 @@ app.include_router(api)
 @app.get("/", include_in_schema=False)
 def index(request: Request):
     prefill = env_bool("PREFILL_API_KEY", False)
-    return templates.TemplateResponse(request, "index.html", {"api_key": os.getenv("API_KEY", "") if prefill else ""})
+    import time
+    return templates.TemplateResponse(request, "index.html", {
+        "api_key": os.getenv("API_KEY", "") if prefill else "",
+        "cache_bust": str(int(time.time())),
+    })

@@ -33,27 +33,40 @@
     { id: "e6", d: "M 869 249 V 270 H 896", kind: "energy", port: "start" },
   ];
 
-  /* Instruments / bulles de mesure.
-     anchor "start"  : bulle sur x, texte à droite
-     anchor "end"    : bulle sur x, texte à gauche
-     anchor "middle" : bulle à gauche de x, texte à droite (évite que le texte recouvre la bulle) */
+
   const READOUTS = [
-    { id: "feed1", kind: "FI", x: 62, y: 30, anchor: "start", feature: "feed_total_kg_h", digits: 0, unit: "kg/h",
-      value: (v) => v.feed_total_kg_h * FEED1_SHARE, tip: "Débit de feed1 : 60 % du total" },
-    { id: "feed2", kind: "FI", x: 62, y: 140, anchor: "start", feature: "feed_total_kg_h", digits: 0, unit: "kg/h",
-      value: (v) => v.feed_total_kg_h * (1 - FEED1_SHARE), tip: "Débit de feed2 : 40 % du total" },
-    { id: "t16", kind: "TI", x: 742, y: 214, anchor: "middle", feature: "T16_C", digits: 1, unit: "°C",
-      value: (v) => v.T16_C, tip: "Température du flux 16 sortie HT-1" },
-    { id: "f16", kind: "FI", x: 742, y: 262, anchor: "middle", feature: "F16_kg_h", digits: 0, unit: "kg/h",
-      value: (v) => v.F16_kg_h, tip: "Débit du flux 16" },
-    { id: "pc", kind: "PI", x: 800, y: 136, anchor: "end", feature: "P_cond_barg", digits: 2, unit: "barg",
-      value: (v) => v.P_cond_barg, tip: "Pression au condenseur" },
-    { id: "rr", kind: "FFI", x: 800, y: 154, anchor: "end", feature: "reflux_ratio", digits: 2, unit: "",
-      value: (v) => v.reflux_ratio, tip: "Taux de reflux" },
-    { id: "t17", kind: "TI", x: 965, y: 194, anchor: "end", feature: "TOP_T_C", digits: 1, unit: "°C",
-      value: (v) => v.TOP_T_C, tip: "Température tête (17)" },
-    { id: "t18", kind: "TI", x: 920, y: 310, anchor: "start", feature: "BOT_T_C", digits: 1, unit: "°C",
-      value: (v) => v.BOT_T_C, tip: "Température fond (18)" },
+    {
+      id: "feed1", kind: "FI", x: 62, y: 30, anchor: "start", feature: "feed_total_kg_h", digits: 0, unit: "kg/h",
+      value: (v) => v.feed_total_kg_h * FEED1_SHARE, tip: "Débit de feed1 : 60 % du total"
+    },
+    {
+      id: "feed2", kind: "FI", x: 62, y: 140, anchor: "start", feature: "feed_total_kg_h", digits: 0, unit: "kg/h",
+      value: (v) => v.feed_total_kg_h * (1 - FEED1_SHARE), tip: "Débit de feed2 : 40 % du total"
+    },
+    {
+      id: "t16", kind: "TI", x: 742, y: 214, anchor: "middle", feature: "T16_C", digits: 1, unit: "°C",
+      value: (v) => v.T16_C, tip: "Température du flux 16 sortie HT-1"
+    },
+    {
+      id: "f16", kind: "FI", x: 742, y: 262, anchor: "middle", feature: "F16_kg_h", digits: 0, unit: "kg/h",
+      value: (v) => v.F16_kg_h, tip: "Débit du flux 16"
+    },
+    {
+      id: "pc", kind: "PI", x: 800, y: 136, anchor: "end", feature: "P_cond_barg", digits: 2, unit: "barg",
+      value: (v) => v.P_cond_barg, tip: "Pression au condenseur"
+    },
+    {
+      id: "rr", kind: "FFI", x: 800, y: 154, anchor: "end", feature: "reflux_ratio", digits: 2, unit: "",
+      value: (v) => v.reflux_ratio, tip: "Taux de reflux"
+    },
+    {
+      id: "t17", kind: "TI", x: 965, y: 194, anchor: "end", feature: "TOP_T_C", digits: 1, unit: "°C",
+      value: (v) => v.TOP_T_C, tip: "Température tête (17)"
+    },
+    {
+      id: "t18", kind: "TI", x: 920, y: 310, anchor: "start", feature: "BOT_T_C", digits: 1, unit: "°C",
+      value: (v) => v.BOT_T_C, tip: "Température fond (18)"
+    },
   ];
 
   const state = {

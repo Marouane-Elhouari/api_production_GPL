@@ -304,7 +304,7 @@
 
     const first = settled.find((s) => s.status === "fulfilled");
     if (first) {
-      setStatus("ok", `Serveur prêt, modèle ${modelLabel("ridge")}`);
+      setStatus("");
       state.history.unshift({
         time: new Date().toLocaleTimeString("fr-FR"),
         duty: first.value.duty_HT1_kW,
@@ -359,9 +359,8 @@
     const target = state.info.target_range || [7000, 8000];
     const pct = Math.min(100, Math.max(0, ((duty - target[0]) / (target[1] - target[0])) * 100));
 
-    const facts = [`<dt>Modèle</dt><dd>${esc(data.model_name)}</dd>`, `<dt>Version</dt><dd>${esc(data.model_version)}</dd>`];
-    if (data.test_r2 != null) facts.push(`<dt>R² sur le jeu de test</dt><dd>${esc(fmt(data.test_r2, 5))}</dd>`);
-    if (data.test_mae_kW != null) facts.push(`<dt>Erreur moyenne (MAE)</dt><dd>${esc(fmt(data.test_mae_kW, 2))} kW</dd>`);
+    const facts = [`<dt>Modèle</dt><dd>${esc(data.model_name)}</dd>`];
+
 
     let compare = "";
     const entries = Object.entries(state.results);
@@ -474,9 +473,11 @@
     }
 
     state.values = Object.assign({}, state.info.example);
-    const gnnInput = els.gnnOpt.querySelector("input");
-    gnnInput.disabled = !hasGnn();
-    els.gnnOpt.title = hasGnn() ? "Réseau de neurones sur graphe" : (state.info.gnn_note || "GNN indisponible");
+    if (els.gnnOpt) {
+      const gnnInput = els.gnnOpt.querySelector("input");
+      if (gnnInput) gnnInput.disabled = !hasGnn();
+      els.gnnOpt.title = hasGnn() ? "Réseau de neurones sur graphe" : (state.info.gnn_note || "GNN indisponible");
+    }
     els.ridgeLabel.textContent = modelLabel("ridge");
 
     renderParams();

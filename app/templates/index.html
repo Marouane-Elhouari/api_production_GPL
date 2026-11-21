@@ -20,7 +20,7 @@
     <div class="key">
       <label for="api-key">Clé API</label>
       <div class="key__field">
-        <input id="api-key" type="password" autocomplete="off" spellcheck="false" placeholder="X-API-Key">
+        <input id="api-key" type="password" autocomplete="off" spellcheck="false" placeholder="Dkhel _api_ ajami ">
         <button type="button" class="btn btn--ghost" id="btn-key-toggle" aria-pressed="false">Afficher</button>
       </div>
       <span id="status" class="status" role="status" data-state="loading">Connexion au serveur</span>
@@ -67,7 +67,7 @@
 
           <rect class="frame" x="4" y="4" width="1016" height="372" rx="4" />
 
-          <!-- Tuyauterie et animations de flux -->
+
           <g id="layer-pipes"></g>
 
           <!-- Équipements du procédé -->
@@ -226,8 +226,8 @@
             <rect class="tb" x="14" y="314" width="260" height="52" rx="2" />
             <line class="tb-line" x1="14" y1="334" x2="274" y2="334" />
             <text class="tb-title" x="22" y="328">Chaîne de production de GPL</text>
-            <text class="tb-text" x="22" y="347">Modèle actif : <tspan id="tb-model" class="tb-strong">Ridge</tspan>
-              </text>
+            <text class="tb-text" x="22" y="347">Modèle : <tspan id="tb-model" class="tb-strong">Ridge</tspan>
+            </text>
             <text class="tb-note" x="22" y="359">Simulation DWSIM &amp; Machine Learning</text>
           </g>
         </svg>
@@ -255,8 +255,8 @@
     </div>
   </main>
 
-  <script src="/static/js/process.js"></script>
-  <script src="/static/js/app.js"></script>
+  <script src="/static/js/process.js?v={{ cache_bust }}"></script>
+  <script src="/static/js/app.js?v={{ cache_bust }}"></script>
 </body>
 
 </html>
